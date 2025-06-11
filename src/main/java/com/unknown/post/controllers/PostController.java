@@ -32,6 +32,13 @@ public class PostController {
         return postRepository.findAll();
     }
 
+    @GetMapping("/find")
+    public List<Post> findPosts(@RequestParam String title) {
+        log.info("Find Post Endpoint");
+        log.debug("Finding post with title {}", title);
+        return postRepository.findPostsByTitleContaining(title);
+    }
+
     @PostMapping("/add")
     public Post addPost(@RequestBody PostDTO data) {
         log.info("Add Post Endpoint");
