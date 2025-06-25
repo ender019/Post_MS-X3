@@ -14,4 +14,6 @@ public interface PostRepository extends MongoRepository<Post, Long> {
     Optional<Post> findPostById(String id);
 
     List<Post> findPostsByTitleContaining(String title);
+
+    List<Post> findPostsByAuthor(String author);
 }
