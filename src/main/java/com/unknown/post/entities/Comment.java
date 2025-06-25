@@ -2,38 +2,30 @@ package com.unknown.post.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "posts")
-public class Post {
+@Document(collection = "comments")
+public class Comment {
     @Id
     @JsonIgnore
     private String id;
-    private String title;
     private String content;
     private String author;
+    @JsonIgnore
+    private String post_id;
     private LocalDateTime date;
 
-    @JsonIgnore
-    @Field("post_ids")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private List<String> comments;
 
-    public Post(String title, String content, String author) {
-        this.title = title;
+    public Comment(String content, String author, String post_id) {
         this.content = content;
         this.author = author;
+        this.post_id = post_id;
         this.date = LocalDateTime.now();
     }
 }
