@@ -11,9 +11,8 @@ spring:
             username: ${PSQL_USERNAME}
             password: ${PSQL_PASSWORD}
             database: ${PSQL_BASENAME}
-    liquibase:
-        change-log: db/changelog/db.changelog-master.yml
-        enabled: true
+mongock:
+    migration-scan-package: com.unknown.post.changelogs
 
 server:
     port: ${PORT}
