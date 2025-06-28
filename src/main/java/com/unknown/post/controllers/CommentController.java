@@ -1,6 +1,7 @@
 package com.unknown.post.controllers;
 
 import com.unknown.post.dtos.CommentDTO;
+import com.unknown.post.dtos.UCommentDTO;
 import com.unknown.post.entities.Comment;
 import com.unknown.post.services.CommentService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class CommentController {
     public Comment getCommentByAuthor(@PathVariable String id){
         log.info("Get Comment by Author Endpoint");
         log.debug("Getting comment with id {}", id);
-        return commentService.getComment(id);
+        return commentService.getCommentById(id);
     }
 
 
@@ -46,11 +47,11 @@ public class CommentController {
     public Comment addComment(@PathVariable String id, @RequestBody CommentDTO data){
         log.info("Add Comment Endpoint");
         log.debug("Adding comment with post id {}\nand data: {}", id, data);
-        return commentService.addComment(data.author(), data.content(), id);
+        return commentService.addComment(data.content(), data.author(), id);
     }
 
     @PutMapping("/{id}")
-    public Comment updateComment(@PathVariable String id, @RequestBody CommentDTO data){
+    public Comment updateComment(@PathVariable String id, @RequestBody UCommentDTO data){
         log.info("Update Comment Endpoint");
         log.debug("Updating comment with id {}\nand data: {}", id, data);
         return commentService.updateComment(id, data.content());

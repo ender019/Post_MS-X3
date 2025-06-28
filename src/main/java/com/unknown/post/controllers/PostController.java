@@ -1,6 +1,7 @@
 package com.unknown.post.controllers;
 
 import com.unknown.post.dtos.PostDTO;
+import com.unknown.post.dtos.UPostDTO;
 import com.unknown.post.entities.Post;
 import com.unknown.post.services.PostService;
 import lombok.extern.slf4j.Slf4j;
@@ -55,10 +56,10 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public Post updatePost(@PathVariable String id, @RequestBody PostDTO data) {
+    public Post updatePost(@PathVariable String id, @RequestBody UPostDTO data) {
         log.info("Update Post Endpoint");
         log.debug("Updating post with id {}\nand data: {}", id, data);
-        return postService.updatePost(id, data);
+        return postService.updatePost(id, data.title(), data.content());
     }
 
     @DeleteMapping("/{id}")
