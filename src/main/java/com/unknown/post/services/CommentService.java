@@ -21,7 +21,7 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
-    public Comment getComment(String id) {
+    public Comment getCommentById(String id) {
         return commentRepository.findCommentById(id).orElseThrow(() -> new NoSuchElementException("Comment not found"));
     }
 
@@ -37,7 +37,7 @@ public class CommentService {
     }
 
     @Transactional
-    public Comment addComment(String author_id, String content, String post_id) {
+    public Comment addComment(String content, String author_id, String post_id) {
         var post = postRepository.findPostById(post_id)
                 .orElseThrow(() -> new NoSuchElementException("Comment not found"));
         Comment comment = commentRepository.save(new Comment(content, author_id, post_id));

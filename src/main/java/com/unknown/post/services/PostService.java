@@ -42,10 +42,10 @@ public class PostService {
     }
 
     @Transactional
-    public Post updatePost(String id, PostDTO data) {
+    public Post updatePost(String id, String title, String content) {
         var post = postRepository.findPostById(id).orElseThrow(() -> new NoSuchElementException("Post not found"));
-        post.setTitle(data.title());
-        post.setContent(data.content());
+        post.setTitle(title);
+        post.setContent(content);
         return postRepository.save(post);
     }
 
