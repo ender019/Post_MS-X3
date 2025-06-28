@@ -2,6 +2,7 @@ package com.unknown.post.services;
 
 import com.unknown.post.dtos.PostDTO;
 import com.unknown.post.entities.Post;
+import com.unknown.post.repositories.CommentRepository;
 import com.unknown.post.repositories.PostRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -22,7 +23,8 @@ import java.util.Optional;
 class PostServiceTest {
     @Mock
     private PostRepository postRepository;
-
+    @Mock
+    private CommentRepository commentRepository;
     @InjectMocks
     private PostService postService;
 
@@ -87,6 +89,27 @@ class PostServiceTest {
     }
 
     @Test
+    void updatePostTest() {
+        log.info("updatePostTest start.");
+        String id = "id";
+        var posted = new Post("title", "content", "author");
+        var data = new PostDTO("data1", "data2", posted.getAuthor());
+        Mockito.doReturn(Optional.of(posted)).when(postRepository).findPostById(id);
+        Mockito.when(postRepository.save(Mockito.any(Post.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        var res = postService.updatePost(id, data.title(), data.content());
+        Assertions.assertEquals(data.title(), res.getTitle());
+        Assertions.assertEquals(data.content(), res.getContent());
+        Assertions.assertEquals(data.author(), res.getAuthor());
+
+        Mockito.verify(postRepository).save(Mockito.argThat(post ->
+                data.title().equals(post.getTitle()) &&
+                data.content().equals(post.getContent()) &&
+                data.author().equals(post.getAuthor())
+        ));
+    }
+
+    @Test
     void delPostByIdTest() {
         log.info("delPostByIdTest start.");
         String id = "id";
@@ -94,7 +117,7 @@ class PostServiceTest {
         Mockito.doReturn(Optional.of(post)).when(postRepository).findPostById(id);
         Mockito.doNothing().when(postRepository).deletePostById(id);
         var res = postService.delPostById(id);
-        Assertions.assertEquals(post.toString(), res);
+        Assertions.assertEquals(post, res);
         Mockito.verify(postRepository, Mockito.times(1)).findPostById(id);
         Mockito.verify(postRepository, Mockito.times(1)).deletePostById(id);
     }
