@@ -5,6 +5,7 @@ spring:
 mongock:
     migration-scan-package: com.unknown.post.changelogs
     transaction-enabled: false
+    enabled: true
 
 logging:
     level:
