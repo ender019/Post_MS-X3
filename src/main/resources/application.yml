@@ -6,13 +6,15 @@ spring:
         name: X3_Post_MS
     data:
         mongodb:
-            host: ${PSQL_HOST}
-            port: ${PSQL_PORT}
-            username: ${PSQL_USERNAME}
-            password: ${PSQL_PASSWORD}
-            database: ${PSQL_BASENAME}
+            host: ${MONGO_HOST}
+            port: ${MONGO_PORT}
+            username: ${MONGO_USERNAME}
+            password: ${MONGO_PASSWORD}
+            database: ${MONGO_BASENAME}
+            authentication-database: admin
 mongock:
     migration-scan-package: com.unknown.post.changelogs
+#    enabled: false
 
 server:
     port: ${PORT}
@@ -31,4 +33,6 @@ logging:
 springdoc:
     swagger-ui:
         enabled: true
-        path: /swagger.html
+        path: /post/swagger.html
+    api-docs:
+        path: /post/v3/api-docs/swagger-config

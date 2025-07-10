@@ -5,7 +5,7 @@ import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-@ChangeUnit(id="1", order = "001", author = "X3_Admin")
+@ChangeUnit(id="1", order = "001", author = "X3_Admin", transactional = false)
 public class CreateCollections {
     @Execution
     public void createCollections(MongoTemplate mongoTemplate) {
