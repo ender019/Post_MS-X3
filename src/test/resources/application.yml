@@ -1,15 +1,17 @@
 spring:
     application:
         name: X3_Post_MS
-    liquibase:
-        change-log: db/changelog/db.changelog-master.yml
-        enabled: true
 
+mongock:
+    migration-scan-package: com.unknown.post.changelogs
+    transaction-enabled: false
+    enabled: true
 
 logging:
     level:
         org.springframework: INFO
         com.unknown.post: DEBUG
+        liquibase: TRACE
     file:
         name: src/test/resources/logging/user-ms.log
     logback:
