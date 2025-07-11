@@ -1,0 +1,72 @@
+version: '0.1.1'
+
+services:
+    app:
+        build:
+            context: .
+        image: x3_post:latest
+        container_name: app_post
+        ports:
+            - "${PORT}:${PORT}"
+        depends_on:
+            - mongo-init
+#                condition: service_healthy
+        environment:
+            - MONGO_HOST=db_mongo
+            - MONGO_PORT=${MONGO_PORT}
+            - MONGO_BASENAME=${MONGO_BASENAME}
+            - MONGO_USERNAME=${MONGO_USERNAME}
+            - MONGO_PASSWORD=${MONGO_PASSWORD}
+            - PORT=${PORT}
+
+    db_mongo:
+        image: mongo:latest
+        container_name: db_mongo
+        command: --replSet rs0 --auth --bind_ip_all --keyFile /keyfile/mongo-keyfile
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+            - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+            - MONGO_INITDB_DATABASE=${MONGO_BASENAME}
+        volumes:
+            - mongo_data:/data/db
+            - ./mongo-keyfile:/keyfile/mongo-keyfile
+        healthcheck:
+            test: echo 'db.runCommand("ping").ok' | mongosh mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@localhost:${MONGO_PORT}/?authSource=admin --quiet
+            interval: 10s
+            timeout: 30s
+            start_period: 2s
+            retries: 10
+
+    mongo-init:
+        image: mongo:latest
+        restart: "no"
+        depends_on:
+            db_mongo:
+                condition: service_healthy
+        command: >
+            bash -c "
+                    mongosh --host db_mongo:27017 --quiet -u ${MONGO_USERNAME} -p ${MONGO_PASSWORD} --authenticationDatabase admin --eval \"
+                      try {
+                              // Проверяем, не инициализирован ли уже реплика-сет
+                              if (!rs.isMaster().setName) {
+                                // Выполняем инициализацию с правами администратора
+                                rs.initiate({
+                                  _id: 'rs0',
+                                  members: [
+                                    { _id: 0, host: 'localhost:27017' }
+                                  ]
+                                });
+                                print('Replica set initialization started');
+
+                              } else {
+                                print('Replica set already initialized');
+                              }
+                            } catch (e) {
+                              print('Error initializing replica set: ' + e);
+                              throw e;
+                      }
+                    \"
+                  "
+
+volumes:
+    mongo_data:
