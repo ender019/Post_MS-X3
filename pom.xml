@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.unknown</groupId>
 	<artifactId>post</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>post</name>
 	<description>Post MS - функции постов</description>
 	<url/>
@@ -31,7 +31,6 @@
 		<java.version>23</java.version>
 		<lombok.version>1.18.36</lombok.version>
 		<springdoc.version>2.6.0</springdoc.version>
-		<liquibase.plugin.version>4.27.0</liquibase.plugin.version>
 	</properties>
 
 	<dependencies>
@@ -49,13 +48,14 @@
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
+			<groupId>io.mongock</groupId>
+			<artifactId>mongock-springboot</artifactId>
+			<version>5.3.4</version> <!-- Актуальная версия -->
 		</dependency>
 		<dependency>
-			<groupId>org.liquibase.ext</groupId>
-			<artifactId>liquibase-mongodb</artifactId>
-			<version>4.28.0</version>
+			<groupId>io.mongock</groupId>
+			<artifactId>mongodb-springdata-v4-driver</artifactId>
+			<version>5.3.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -115,27 +115,6 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
-			</plugin>
-
-			<!-- Liquibase Plugin -->
-			<plugin>
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-maven-plugin</artifactId>
-				<version>${liquibase.plugin.version}</version>
-				<configuration>
-					<propertyFile>liquibase.properties</propertyFile>
-					<systemProperties>
-						<liquibase.username>X3_Admin</liquibase.username>
-					</systemProperties>
-					<logging>info</logging>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.liquibase.ext</groupId>
-						<artifactId>liquibase-hibernate6</artifactId>
-						<version>${liquibase.plugin.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 
 			<!-- Spring Boot Plugin -->
