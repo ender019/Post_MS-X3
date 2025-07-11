@@ -110,5 +110,5 @@ src/
     │   │           ├── repositories/ # Интерфейсы JPA
     │   │           └── services/     # Бизнес-логика
     │   └── resources/                # Конфиги и логи
-    └── test/                         # Тесты
+    └── test/  
 ```
