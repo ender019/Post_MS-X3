@@ -33,7 +33,7 @@ class CommentControllerTest {
     private CommentService commentService;
 
     @Test
-    void getCommentByAuthorTest() throws Exception {
+    void getCommentByIDTest() throws Exception {
         log.info("getCommentTest start.");
         String id = "id";
         var comment = new Comment("content", "author", "post");
