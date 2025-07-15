@@ -21,16 +21,16 @@ import java.util.List;
 public class ReactionController {
     private final ReactionService reactionService;
 
-    @GetMapping("/{post_id}")
-    public List<ReactDTO> getPostReactionsCount(@PathVariable RCollections collection, @PathVariable String post_id) {
-        log.info("Get post reactions count from {} for {}", collection, post_id);
-        return reactionService.getReactionsCountByPost(collection.name()+"_reacts", post_id);
+    @GetMapping("/{reacted_id}")
+    public List<ReactDTO> getPostReactionsCount(@PathVariable RCollections collection, @PathVariable String reacted_id) {
+        log.info("Get post reactions count from {} for {}", collection, reacted_id);
+        return reactionService.getReactionsCountByCollection(collection.name() + "_reacts", reacted_id);
     }
 
     @GetMapping("/user")
     public List<ReactDTO> getUserReactionsCount(@PathVariable RCollections collection, @RequestParam String user_id) {
         log.info("Get user reactions count from {} for {}", collection, user_id);
-        return reactionService.getReactionsCountByUser(collection.name()+"_reacts", user_id);
+        return reactionService.getReactionsCountByUser(collection.name() + "_reacts", user_id);
     }
 
     @GetMapping("/user/{user_id}")
@@ -39,12 +39,12 @@ public class ReactionController {
                                          @RequestParam ReactTypes type
     ) {
         log.info("Get user reactions from {} for {}", collection, user_id);
-        return reactionService.getReactionsByUser(collection.name()+"_reacts", user_id, type.name());
+        return reactionService.getReactionsByUser(collection.name() + "_reacts", user_id, type.name());
     }
 
     @PostMapping("/")
     public Reaction procReaction(@PathVariable RCollections collection, UReactDTO UReactDTO) {
         log.info("Processing reaction from {} for {}", collection, UReactDTO);
-        return reactionService.procReaction(collection.name()+"_reacts", UReactDTO);
+        return reactionService.procReaction(collection.name() + "_reacts", UReactDTO);
     }
 }

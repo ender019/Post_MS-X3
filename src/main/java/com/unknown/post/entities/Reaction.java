@@ -17,13 +17,13 @@ public class Reaction {
     @JsonIgnore
     private String id;
     private String user_id;
-    private String post_id;
+    private String reacted_id;
     private ReactTypes type;
     private LocalDateTime date;
 
-    public Reaction(String user_id, String post_id, ReactTypes type) {
+    public Reaction(String user_id, String reacted_id, ReactTypes type) {
         this.user_id = user_id;
-        this.post_id = post_id;
+        this.reacted_id = reacted_id;
         this.type = type;
         this.date = LocalDateTime.now();
     }

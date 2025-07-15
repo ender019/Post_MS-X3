@@ -18,12 +18,12 @@ import java.util.Optional;
 public class ReactionService {
     private final MongoTemplate mongoTemplate;
 
-    public List<ReactDTO> getReactionsCountByPost(String collection, String post_id) {
+    public List<ReactDTO> getReactionsCountByCollection(String collection, String reacted_id) {
         return mongoTemplate.aggregate(
                 Aggregation.newAggregation(
-                        Aggregation.match(Criteria.where("post_id").is(post_id)),
+                        Aggregation.match(Criteria.where("reacted_id").is(reacted_id)),
                         Aggregation.group("type").count().as("count"),
-                        Aggregation.project().and("type").as("type").and("count").as("count")
+                        Aggregation.project("count").and("_id").as("name")
                 ),
                 collection,
                 ReactDTO.class
@@ -42,7 +42,7 @@ public class ReactionService {
                 Aggregation.newAggregation(
                         Aggregation.match(Criteria.where("user_id").is(user_id)),
                         Aggregation.group("type").count().as("count"),
-                        Aggregation.project().and("_id").as("user_id").and("posts").as("posts")
+                        Aggregation.project("count").and("_id").as("name")
                 ),
                 collection,
                 ReactDTO.class
@@ -51,11 +51,11 @@ public class ReactionService {
 
     public Reaction procReaction(String collection, UReactDTO data) {
         var reaction = Optional.ofNullable(mongoTemplate.findOne(new Query(
-                        Criteria.where("post_id").is(data.post_id()).and("user_id").is(data.user_id())
+                        Criteria.where("reacted_id").is(data.reacted_id()).and("user_id").is(data.user_id())
                 ), Reaction.class, collection
         ));
         if (reaction.isEmpty())
-            return mongoTemplate.save(new Reaction(data.user_id(), data.post_id(), data.type()), collection);
+            return mongoTemplate.save(new Reaction(data.user_id(), data.reacted_id(), data.type()), collection);
         else if (reaction.get().getType().equals(data.type())) {
             mongoTemplate.remove(reaction.get(), collection);
             return reaction.get();
