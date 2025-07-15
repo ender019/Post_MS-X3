@@ -1,0 +1,100 @@
+[
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d03"},
+        "user_id": "Daniel Lee",
+        "reacted_id": "65d33a71b3a9c15e47b89a01",
+        "type": "DISLIKE",
+        "date": "2025-06-21T09:10:40"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d07"},
+        "user_id": "Alex Johnson",
+        "reacted_id": "65d33a71b3a9c15e47b89a01",
+        "type": "LIKE",
+        "date": "2025-06-23T08:45:18"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d13"},
+        "user_id": "Maria Garcia",
+        "reacted_id": "65d33a71b3a9c15e47b89a01",
+        "type": "LIKE",
+        "date": "2025-06-26T16:45:30"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d04"},
+        "user_id": "Daniel Lee",
+        "reacted_id": "65d33a71b3a9c15e47b89a02",
+        "type": "LIKE",
+        "date": "2025-06-21T10:30:22"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d17"},
+        "user_id": "Alex Johnson",
+        "reacted_id": "65d33a71b3a9c15e47b89a03",
+        "type": "LIKE",
+        "date": "2025-06-23T08:45:18"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d08"},
+        "user_id": "Maria Garcia",
+        "reacted_id": "65d33a71b3a9c15e47b89a04",
+        "type": "LIKE",
+        "date": "2025-06-23T12:30:40"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d10"},
+        "user_id": "Maria Garcia",
+        "reacted_id": "65d33a71b3a9c15e47b89a05",
+        "type": "DISLIKE",
+        "date": "2025-06-25T09:15:30"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d12"},
+        "user_id": "Maria Garcia",
+        "reacted_id": "65d33a71b3a9c15e47b89a06",
+        "type": "LIKE",
+        "date": "2025-06-26T10:05:18"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d23"},
+        "user_id": "Maria Garcia",
+        "reacted_id": "65d33a71b3a9c15e47b89a07",
+        "type": "LIKE",
+        "date": "2025-06-26T16:45:30"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d16"},
+        "user_id": "Sarah Chen",
+        "reacted_id": "65d33a71b3a9c15e47b89a08",
+        "type": "LIKE",
+        "date": "2025-06-27T10:45:10"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d18"},
+        "user_id": "Sarah Chen",
+        "reacted_id": "65d33a71b3a9c15e47b89a09",
+        "type": "DISLIKE",
+        "date": "2025-06-27T14:20:15"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d24"},
+        "user_id": "Maria Garcia",
+        "reacted_id": "65d33a71b3a9c15e47b89a09",
+        "type": "LIKE",
+        "date": "2025-06-26T16:45:30"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d19"},
+        "user_id": "Robert Kim",
+        "reacted_id": "65d33a71b3a9c15e47b89a10",
+        "type": "LIKE",
+        "date": "2025-06-27T17:45:50"
+    },
+    {
+        "_id": {"$oid": "65d33a71b3a9c15e47b89d20"},
+        "user_id": "Emily Davis",
+        "reacted_id": "65d33a71b3a9c15e47b89a10",
+        "type": "LIKE",
+        "date": "2025-06-27T19:30:25"
+    }
+]

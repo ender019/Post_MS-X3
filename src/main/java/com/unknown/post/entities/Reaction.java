@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Data
 @NoArgsConstructor
@@ -25,6 +26,6 @@ public class Reaction {
         this.user_id = user_id;
         this.reacted_id = reacted_id;
         this.type = type;
-        this.date = LocalDateTime.now();
+        this.date = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
     }
 }
