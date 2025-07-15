@@ -4,7 +4,6 @@ import com.unknown.post.dtos.PostDTO;
 import com.unknown.post.dtos.UPostDTO;
 import com.unknown.post.entities.Post;
 import com.unknown.post.services.PostService;
-import io.mongock.runner.springboot.base.MongockApplicationRunner;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

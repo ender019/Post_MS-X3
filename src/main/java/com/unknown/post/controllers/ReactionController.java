@@ -22,7 +22,7 @@ public class ReactionController {
     private final ReactionService reactionService;
 
     @GetMapping("/{reacted_id}")
-    public List<ReactDTO> getPostReactionsCount(@PathVariable RCollections collection, @PathVariable String reacted_id) {
+    public List<ReactDTO> getReactionsCount(@PathVariable RCollections collection, @PathVariable String reacted_id) {
         log.info("Get post reactions count from {} for {}", collection, reacted_id);
         return reactionService.getReactionsCountByCollection(collection.name() + "_reacts", reacted_id);
     }
@@ -43,8 +43,8 @@ public class ReactionController {
     }
 
     @PostMapping("/")
-    public Reaction procReaction(@PathVariable RCollections collection, UReactDTO UReactDTO) {
-        log.info("Processing reaction from {} for {}", collection, UReactDTO);
-        return reactionService.procReaction(collection.name() + "_reacts", UReactDTO);
+    public Reaction procReaction(@PathVariable RCollections collection, @RequestBody UReactDTO data) {
+        log.info("Processing reaction from {} for {}", collection, data);
+        return reactionService.procReaction(collection.name() + "_reacts", data);
     }
 }
