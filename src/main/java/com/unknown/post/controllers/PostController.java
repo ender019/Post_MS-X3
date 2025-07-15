@@ -6,6 +6,7 @@ import com.unknown.post.entities.Post;
 import com.unknown.post.services.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,9 @@ import java.util.List;
 @Tag(name = "Post Controller", description = "Контроллер для работы с постами.")
 @RestController
 @RequestMapping("/post")
+@AllArgsConstructor
 public class PostController {
     private final PostService postService;
-
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
 
     @Operation(summary = "Get post by id", description = "Возвращает пост по ИД.")
     @GetMapping("/{id}")
