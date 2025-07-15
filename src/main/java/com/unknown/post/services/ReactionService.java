@@ -32,9 +32,8 @@ public class ReactionService {
 
     public List<String> getReactionsByUser(String collection, String user_id, String type) {
         var query = new Query(Criteria.where("user_id").is(user_id).and("type").is(type));
-        query.fields().include("_id");
-        return mongoTemplate.find(query, String.class, collection
-        );
+        query.fields().include("reacted_id");
+        return mongoTemplate.find(query, String.class, collection);
     }
 
     public List<ReactDTO> getReactionsCountByUser(String collection, String user_id) {
