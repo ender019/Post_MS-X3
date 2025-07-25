@@ -1,6 +1,7 @@
 package com.unknown.post.controllers;
 
 import com.unknown.post.dtos.CommentDTO;
+import com.unknown.post.dtos.FullCommentDTO;
 import com.unknown.post.dtos.UCommentDTO;
 import com.unknown.post.entities.Comment;
 import com.unknown.post.services.CommentService;
@@ -25,7 +26,7 @@ public class CommentController {
 
     @Operation(summary = "Get comment by id", description = "Возвращает комментарий по ИД.")
     @GetMapping("/{id}")
-    public Comment getCommentByID(@PathVariable String id){
+    public FullCommentDTO getCommentByID(@PathVariable String id){
         log.info("Get Comment by Author Endpoint");
         log.debug("Getting comment with id {}", id);
         return commentService.getCommentById(id);
@@ -33,7 +34,7 @@ public class CommentController {
     
     @Operation(summary = "Get comments by author id", description = "Возвращает комментарии конкретного автора.")
     @GetMapping("/author/{id}")
-    public List<Comment> getCommentsByAuthor(@PathVariable String id){
+    public List<FullCommentDTO> getCommentsByAuthor(@PathVariable String id){
         log.info("Get Comments by Author Endpoint");
         log.debug("Getting comment with author {}", id);
         return commentService.getCommentsByAuthor(id);
@@ -41,7 +42,7 @@ public class CommentController {
 
     @Operation(summary = "Get comments by post id", description = "Возвращает данные комментария к конкретному посту.")
     @GetMapping("/post/{id}")
-    public List<Comment> getCommentsByPost(@PathVariable String id){
+    public List<FullCommentDTO> getCommentsByPost(@PathVariable String id){
         log.info("Get Comments by Post Endpoint");
         log.debug("Getting comment with post {}", id);
         return commentService.getCommentsByPost(id);

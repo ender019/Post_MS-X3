@@ -1,5 +1,6 @@
 package com.unknown.post.controllers;
 
+import com.unknown.post.dtos.FullPostDTO;
 import com.unknown.post.dtos.PostDTO;
 import com.unknown.post.dtos.UPostDTO;
 import com.unknown.post.entities.Post;
@@ -23,7 +24,7 @@ public class PostController {
 
     @Operation(summary = "Get post by id", description = "Возвращает пост по ИД.")
     @GetMapping("/{id}")
-    public Post getPost(@PathVariable String id){
+    public FullPostDTO getPost(@PathVariable String id){
         log.info("Get Post Endpoint");
         log.debug("Getting post with id {}", id);
         return postService.getPostById(id);
@@ -31,14 +32,14 @@ public class PostController {
 
     @Operation(summary = "Get all posts", description = "Возвращает все посты.")
     @GetMapping("/all")
-    public List<Post> getAllPosts() {
+    public List<FullPostDTO> getAllPosts() {
         log.info("Get All Posts Endpoint");
         return postService.getAllPosts();
     }
 
     @Operation(summary = "Get posts by author", description = "Возвращает посты конкретного автора.")
     @GetMapping("/author/{author_id}")
-    public List<Post> getPostsByAuthor(@PathVariable String author_id) {
+    public List<FullPostDTO> getPostsByAuthor(@PathVariable String author_id) {
         log.info("Get Posts by Author Endpoint");
         log.debug("Getting post with author author_id {}", author_id);
         return postService.getPostsByAuthor(author_id);
@@ -46,9 +47,9 @@ public class PostController {
 
     @Operation(summary = "Get posts by title", description = "Возвращает посты с конкретным названием.")
     @GetMapping("/find")
-    public List<Post> findPosts(@RequestParam String title) {
+    public List<FullPostDTO> findPosts(@RequestParam String title) {
         log.info("Find Post Endpoint");
-        log.debug("Finding post with title {}", title);
+        log.debug("Finding post with title: {}", title);
         return postService.findPostsByTitle(title);
     }
 
@@ -71,9 +72,19 @@ public class PostController {
 
     @Operation(summary = "Delete post by id", description = "Удаляет пост по его ИД.")
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public Post deletePost(@PathVariable String id) {
         log.info("Delete Post Endpoint");
         log.debug("Deleting post with id {}", id);
         return postService.delPostById(id);
+    }
+
+    @Operation(summary = "Get posts by author", description = "Возвращает посты конкретного автора.")
+    @DeleteMapping("/author/{author_id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delPostsByAuthor(@PathVariable String author_id, @RequestParam String deleted) {
+        log.info("Del Posts by Author Endpoint");
+        log.debug("Deleting post with author author_id {} with {}", author_id, deleted);
+        postService.delPostByAuthor(author_id, deleted);
     }
 }
