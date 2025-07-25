@@ -1,11 +1,14 @@
 package com.unknown.post.services;
 
+import com.unknown.post.dtos.FullPostDTO;
 import com.unknown.post.dtos.PostDTO;
+import com.unknown.post.dtos.UserDTO;
 import com.unknown.post.entities.Post;
 import com.unknown.post.repositories.CommentRepository;
 import com.unknown.post.repositories.PostRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,122 +16,177 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-class PostServiceTest {
+public class PostServiceTest {
+
     @Mock
     private PostRepository postRepository;
     @Mock
     private CommentRepository commentRepository;
+    @Mock
+    private ReactionService reactionService;
+    @Mock
+    private UserService userService;
+
     @InjectMocks
     private PostService postService;
 
+    private final String testId = "testId";
+    private final String testAuthor = "authorId";
+    private final Post testPost = new Post("Test Title", "Test Content", testAuthor);
+    private final UserDTO testUser = new UserDTO(testAuthor, "username", "avatar");
+    private final FullPostDTO expectedFullPost = new FullPostDTO(
+            testAuthor,
+            "username",
+            "avatar",
+            testId,
+            "Test Title",
+            "Test Content",
+            testPost.getDate()
+    );
+
+    @BeforeEach
+    void setup() {
+        testPost.setId(testId);
+    }
+
     @Test
     void getPostByIdTest() {
-        log.info("getPostByIdTest start.");
-        String id = "id";
-        var post = new Post("title", "content", "author");
-        Mockito.doReturn(Optional.of(post)).when(postRepository).findPostById(id);
-        var res = postService.getPostById(id);
-        Assertions.assertEquals(post, res);
-        Mockito.verify(postRepository, Mockito.times(1)).findPostById(id);
+        log.info("getPostByIdTest started.");
+        Mockito.doReturn(Optional.of(testPost)).when(postRepository).findPostById(testId);
+        Mockito.doReturn(testUser).when(userService).getFullUser(testAuthor);
+
+        FullPostDTO result = postService.getPostById(testId);
+
+        Assertions.assertEquals(expectedFullPost, result);
+        Mockito.verify(postRepository).findPostById(testId);
+        Mockito.verify(userService).getFullUser(testAuthor);
     }
 
     @Test
-    void getUnexistPostByIdTest() {
-        log.info("getUnexistPostByIdTest start.");
-        String id = "id";
-        Mockito.doReturn(Optional.empty()).when(postRepository).findPostById(id);
-        Assertions.assertThrows(NoSuchElementException.class, () -> postService.getPostById(id));
-        Mockito.verify(postRepository, Mockito.times(1)).findPostById(id);
+    void getAllPostsTest() {
+        log.info("getAllPostsTest started.");
+        List<Post> posts = Collections.singletonList(testPost);
+        List<UserDTO> users = Collections.singletonList(testUser);
+
+        Mockito.doReturn(posts).when(postRepository).findAll();
+        Mockito.doReturn(users).when(userService).getFullUsersGroup(Collections.singletonList(testAuthor));
+
+        List<FullPostDTO> result = postService.getAllPosts();
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(expectedFullPost, result.getFirst());
+        Mockito.verify(postRepository).findAll();
+        Mockito.verify(userService).getFullUsersGroup(Collections.singletonList(testAuthor));
     }
 
     @Test
-    void findAllPostsTest() {
-        log.info("findAllPostsTest start.");
-        var post = new Post("title", "content", "author");
-        Mockito.doReturn(List.of(post)).when(postRepository).findAll();
-        var res = postService.getAllPosts();
-        Assertions.assertEquals(List.of(post), res);
-        Mockito.verify(postRepository, Mockito.times(1)).findAll();
+    void getPostsByAuthorTest() {
+        log.info("getPostsByAuthorTest started.");
+        List<Post> posts = Collections.singletonList(testPost);
+        Mockito.doReturn(posts).when(postRepository).findPostsByAuthor(testAuthor);
+        Mockito.doReturn(testUser).when(userService).getFullUser(testAuthor);
+
+        List<FullPostDTO> result = postService.getPostsByAuthor(testAuthor);
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(expectedFullPost, result.getFirst());
+        Mockito.verify(postRepository).findPostsByAuthor(testAuthor);
+        Mockito.verify(userService).getFullUser(testAuthor);
     }
 
     @Test
     void findPostsByTitleTest() {
-        log.info("findPostsByTitleTest start.");
-        String title = "tit";
-        var post = new Post("title", "content", "author");
-        Mockito.doReturn(List.of(post)).when(postRepository).findPostsByTitleContaining(title);
-        var res = postService.findPostsByTitle(title);
-        Assertions.assertEquals(List.of(post), res);
-        Mockito.verify(postRepository, Mockito.times(1)).findPostsByTitleContaining(title);
+        log.info("findPostsByTitleTest started.");
+        String title = "Test";
+        List<Post> posts = Collections.singletonList(testPost);
+        List<UserDTO> users = Collections.singletonList(testUser);
+
+        Mockito.doReturn(posts).when(postRepository).findPostsByTitleContainingIgnoreCase(title);
+        Mockito.doReturn(users).when(userService).getFullUsersGroup(Collections.singletonList(testAuthor));
+
+        List<FullPostDTO> result = postService.findPostsByTitle(title);
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(expectedFullPost, result.getFirst());
+        Mockito.verify(postRepository).findPostsByTitleContainingIgnoreCase(title);
+        Mockito.verify(userService).getFullUsersGroup(Collections.singletonList(testAuthor));
     }
 
     @Test
     void addPostTest() {
-        log.info("addPostTest start.");
-        var posted = new Post("title", "content", "author");
-        var data = new PostDTO(posted.getTitle(), posted.getContent(), posted.getAuthor());
-        Mockito.when(postRepository.save(Mockito.any(Post.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-        var res = postService.addPost(data);
-        Assertions.assertEquals(data.title(), res.getTitle());
-        Assertions.assertEquals(data.content(), res.getContent());
-        Assertions.assertEquals(data.author(), res.getAuthor());
+        log.info("addPostTest started.");
+        PostDTO dto = new PostDTO("New Title", "New Content", testAuthor);
+        Post newPost = new Post(dto.title(), dto.content(), dto.author());
 
-        Mockito.verify(postRepository).save(Mockito.argThat(post ->
-                "title".equals(post.getTitle()) &&
-                "content".equals(post.getContent()) &&
-                "author".equals(post.getAuthor())
-        ));
+        Mockito.doReturn(newPost).when(postRepository).save(Mockito.any(Post.class));
+
+        Post result = postService.addPost(dto);
+
+        Assertions.assertEquals(newPost, result);
+        Mockito.verify(postRepository).save(Mockito.any(Post.class));
     }
 
     @Test
     void updatePostTest() {
-        log.info("updatePostTest start.");
-        String id = "id";
-        var posted = new Post("title", "content", "author");
-        var data = new PostDTO("data1", "data2", posted.getAuthor());
-        Mockito.doReturn(Optional.of(posted)).when(postRepository).findPostById(id);
-        Mockito.when(postRepository.save(Mockito.any(Post.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-        var res = postService.updatePost(id, data.title(), data.content());
-        Assertions.assertEquals(data.title(), res.getTitle());
-        Assertions.assertEquals(data.content(), res.getContent());
-        Assertions.assertEquals(data.author(), res.getAuthor());
+        log.info("updatePostTest started.");
+        String newTitle = "Updated Title";
+        String newContent = "Updated Content";
 
-        Mockito.verify(postRepository).save(Mockito.argThat(post ->
-                data.title().equals(post.getTitle()) &&
-                data.content().equals(post.getContent()) &&
-                data.author().equals(post.getAuthor())
-        ));
+        Mockito.doReturn(Optional.of(testPost)).when(postRepository).findPostById(testId);
+        Mockito.doReturn(testPost).when(postRepository).save(testPost);
+
+        Post result = postService.updatePost(testId, newTitle, newContent);
+
+        Assertions.assertEquals(newTitle, result.getTitle());
+        Assertions.assertEquals(newContent, result.getContent());
+        Mockito.verify(postRepository).findPostById(testId);
+        Mockito.verify(postRepository).save(testPost);
     }
 
     @Test
     void delPostByIdTest() {
-        log.info("delPostByIdTest start.");
-        String id = "id";
-        var post = new Post("title", "content", "author");
-        Mockito.doReturn(Optional.of(post)).when(postRepository).findPostById(id);
-        Mockito.doNothing().when(postRepository).deletePostById(id);
-        var res = postService.delPostById(id);
-        Assertions.assertEquals(post, res);
-        Mockito.verify(postRepository, Mockito.times(1)).findPostById(id);
-        Mockito.verify(postRepository, Mockito.times(1)).deletePostById(id);
+        log.info("delPostByIdTest started.");
+        List<String> comments = List.of("comment1", "comment2");
+        testPost.setComments(comments);
+
+        Mockito.doReturn(Optional.of(testPost)).when(postRepository).findPostById(testId);
+
+        Post result = postService.delPostById(testId);
+
+        Assertions.assertEquals(testPost, result);
+        Mockito.verify(commentRepository).deleteAllById(comments);
+        Mockito.verify(reactionService).deleteReactionById("post", Collections.singletonList(testId));
+        Mockito.verify(reactionService).deleteReactionById("comment", comments);
+        Mockito.verify(postRepository).deletePostById(testId);
     }
 
     @Test
-    void delUnexistPostByIdTest() {
-        log.info("delUnexistPostByIdTest start.");
-        String id = "id";
-        Mockito.doReturn(Optional.empty()).when(postRepository).findPostById(id);
-        Assertions.assertThrows(NoSuchElementException.class, () -> postService.delPostById(id));
-        Mockito.verify(postRepository, Mockito.times(1)).findPostById(id);
-        Mockito.verifyNoMoreInteractions(postRepository);
+    void delPostByAuthor_DeleteModeTest() {
+        log.info("delPostByAuthor_DeleteModeTest started.");
+        postService.delPostByAuthor(testAuthor, "<->");
+
+        Mockito.verify(postRepository).deletePostsByAuthor(testAuthor);
+        Mockito.verify(commentRepository).deleteCommentByAuthor(testAuthor);
+        Mockito.verify(reactionService).deleteReactionByUser("post_reacts", testAuthor);
+        Mockito.verify(reactionService).deleteReactionByUser("comment_reacts", testAuthor);
+    }
+
+    @Test
+    void delPostByAuthor_ReplaceModeTest() {
+        log.info("delPostByAuthor_ReplaceModeTest started.");
+        String replacement = "deletedUser";
+        postService.delPostByAuthor(testAuthor, replacement);
+
+        Mockito.verify(postRepository).updateAuthorByAuthor(testAuthor, replacement);
+        Mockito.verify(commentRepository).updateAuthorByAuthor(testAuthor, replacement);
+        Mockito.verify(reactionService).replaceUser("post_reacts", testAuthor, replacement);
+        Mockito.verify(reactionService).replaceUser("comment_reacts", testAuthor, replacement);
     }
 }
