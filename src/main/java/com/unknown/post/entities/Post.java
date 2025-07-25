@@ -18,7 +18,6 @@ import java.util.List;
 @Document(collection = "posts")
 public class Post {
     @Id
-    @JsonIgnore
     private String id;
     private String title;
     private String content;
