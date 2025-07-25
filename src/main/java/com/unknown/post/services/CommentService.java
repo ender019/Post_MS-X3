@@ -1,39 +1,66 @@
 package com.unknown.post.services;
 
+import com.unknown.post.dtos.FullCommentDTO;
+import com.unknown.post.dtos.UserDTO;
 import com.unknown.post.entities.Comment;
 import com.unknown.post.repositories.CommentRepository;
 import com.unknown.post.repositories.PostRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
+@Slf4j
 @Service
+@AllArgsConstructor
 public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final ReactionService reactionService;
+    private final UserService userService;
 
-    public CommentService(PostRepository postRepository, CommentRepository commentRepository) {
-        this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
+    public FullCommentDTO match(Comment comment, UserDTO user) {
+        return new FullCommentDTO(
+                comment.getAuthor(),
+                user.username(),
+                user.avatar(),
+                comment.getId(),
+                comment.getContent(),
+                comment.getDate()
+        );
     }
 
-    public Comment getCommentById(String id) {
-        return commentRepository.findCommentById(id).orElseThrow(() -> new NoSuchElementException("Comment not found"));
+    public List<FullCommentDTO> matchGroup(List<Comment> comments, List<UserDTO> users) {
+        comments.sort(Comparator.comparing(Comment::getAuthor));
+        users.sort(Comparator.comparing(UserDTO::id));
+        List<FullCommentDTO> result = new ArrayList<>();
+        for (int i = 0; i < comments.size(); i++) result.add(match(comments.get(i), users.get(i)));
+        return result;
     }
 
-    public List<Comment> getCommentsByAuthor(String author_id) {
-        return commentRepository.findCommentsByAuthor(author_id);
+    public FullCommentDTO getCommentById(String id) {
+        var comment = commentRepository.findCommentById(id).orElseThrow(() -> new NoSuchElementException("Comment not found"));
+        var user = userService.getFullUser(comment.getAuthor());
+        log.debug("Comment data: {}", comment);
+        log.debug("User data: {}", user);
+        return match(comment, user);
     }
 
-    public List<Comment> getCommentsByPost(String post_id) {
+    public List<FullCommentDTO> getCommentsByAuthor(String author_id) {
+        var comments = commentRepository.findCommentsByAuthor(author_id);
+        var users = userService.getFullUsersGroup(comments.stream().map(Comment::getAuthor).toList());
+        return matchGroup(comments, users);
+    }
+
+    public List<FullCommentDTO> getCommentsByPost(String post_id) {
         var post = postRepository.findPostById(post_id)
                 .orElseThrow(() -> new NoSuchElementException("Comment not found"));
         if(post.getComments() == null || post.getComments().isEmpty()) return Collections.emptyList();
-        return commentRepository.findAllById(post.getComments());
+        var comments = commentRepository.findAllById(post.getComments());
+        var users = userService.getFullUsersGroup(comments.stream().map(Comment::getAuthor).toList());
+        return matchGroup(comments, users);
     }
 
     @Transactional
@@ -62,6 +89,7 @@ public class CommentService {
         var post = postRepository.findPostById(comment.getPost_id())
                 .orElseThrow(() -> new NoSuchElementException("Post not found"));
         post.getComments().remove(comment.getId());
+        reactionService.deleteReactionById("comment", List.of(comment.getId()));
         postRepository.save(post);
         commentRepository.deleteCommentById(id);
         return comment;
