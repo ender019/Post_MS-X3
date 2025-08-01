@@ -56,6 +56,8 @@ public class PostService {
     public List<FullPostDTO> getAllPosts() {
         var posts = postRepository.findAll();
         var users = userService.getFullUsersGroup(posts.stream().map(Post::getAuthor).toList());
+        log.debug("Post data: {}", posts);
+        log.debug("User data: {}", users);
         return matchGroup(posts, users);
     }
 

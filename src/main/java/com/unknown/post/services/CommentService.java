@@ -51,15 +51,20 @@ public class CommentService {
     public List<FullCommentDTO> getCommentsByAuthor(String author_id) {
         var comments = commentRepository.findCommentsByAuthor(author_id);
         var users = userService.getFullUsersGroup(comments.stream().map(Comment::getAuthor).toList());
+        log.debug("Comment data: {}", comments);
+        log.debug("User data: {}", users);
         return matchGroup(comments, users);
     }
 
     public List<FullCommentDTO> getCommentsByPost(String post_id) {
         var post = postRepository.findPostById(post_id)
                 .orElseThrow(() -> new NoSuchElementException("Comment not found"));
+        log.debug("Post data: {}", post);
         if(post.getComments() == null || post.getComments().isEmpty()) return Collections.emptyList();
         var comments = commentRepository.findAllById(post.getComments());
         var users = userService.getFullUsersGroup(comments.stream().map(Comment::getAuthor).toList());
+        log.debug("Comment data: {}", comments);
+        log.debug("User data: {}", users);
         return matchGroup(comments, users);
     }
 
