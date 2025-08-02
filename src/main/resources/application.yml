@@ -14,10 +14,10 @@ spring:
             authentication-database: admin
 mongock:
     migration-scan-package: com.unknown.post.changelogs
-#    enabled: false
 
 server:
     port: ${PORT}
+    gateway: ${GATEWAY}
 
 logging:
     level:

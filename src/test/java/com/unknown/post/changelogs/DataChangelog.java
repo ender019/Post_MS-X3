@@ -11,41 +11,41 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.util.FileCopyUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Slf4j
 @ChangeUnit(id="2", order = "002", author = "X3_Admin")
 public class DataChangelog {
 
-    private void insertJson(MongoTemplate mongoTemplate, String collectionName) throws Exception {
+    private final List<String> collections = List.of("posts", "comments", "post_reacts");
+
+    private void insertJson(MongoTemplate mongoTemplate, String collectionName){
         ClassPathResource resource = new ClassPathResource("data/"+collectionName+".json");
         try (InputStream inputStream = resource.getInputStream()) {
-            // 2. Чтение содержимого файла
             byte[] bytes = FileCopyUtils.copyToByteArray(inputStream);
             String jsonContent = new String(bytes, StandardCharsets.UTF_8);
-            // 3. Парсинг JSON
             JsonNode rootNode = new ObjectMapper().readTree(jsonContent);
-            // 5. Вставка в MongoDB
             for (JsonNode node : rootNode) mongoTemplate.insert(Document.parse(node.toString()), collectionName);
+        } catch (IOException e) {
+            log.error(e.getMessage());
         }
     }
 
     @Execution
     public void addData(MongoTemplate mongoTemplate) throws Exception {
-        insertJson(mongoTemplate, "posts");
-        insertJson(mongoTemplate, "comments");
+        collections.forEach(collection -> insertJson(mongoTemplate, collection));
     }
 
     @RollbackExecution
     public void  rollback(MongoTemplate mongoTemplate) {
-        if (mongoTemplate.collectionExists("posts")) {
-            mongoTemplate.dropCollection("posts");
-            mongoTemplate.createCollection("posts");
-        }
-        if (mongoTemplate.collectionExists("comments")) {
-            mongoTemplate.dropCollection("comments");
-            mongoTemplate.createCollection("comments");
-        }
+        collections.forEach(collection -> {
+            if (mongoTemplate.collectionExists(collection)) {
+                mongoTemplate.dropCollection(collection);
+                mongoTemplate.createCollection(collection);
+            }
+        });
     }
 }

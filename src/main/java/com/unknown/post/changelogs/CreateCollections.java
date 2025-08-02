@@ -13,11 +13,17 @@ public class CreateCollections {
             mongoTemplate.createCollection("posts");
         if (!mongoTemplate.collectionExists("comments"))
             mongoTemplate.createCollection("comments");
+        if (!mongoTemplate.collectionExists("post_reacts"))
+            mongoTemplate.createCollection("post_reacts");
+        if (!mongoTemplate.collectionExists("comment_reacts"))
+            mongoTemplate.createCollection("comment_reacts");
     }
 
     @RollbackExecution
     public void  rollback(MongoTemplate mongoTemplate) {
         mongoTemplate.dropCollection("posts");
         mongoTemplate.dropCollection("comments");
+        mongoTemplate.dropCollection("post_reacts");
+        mongoTemplate.dropCollection("comment_reacts");
     }
 }
