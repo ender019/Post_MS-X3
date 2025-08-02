@@ -170,23 +170,11 @@ public class PostServiceTest {
     @Test
     void delPostByAuthor_DeleteModeTest() {
         log.info("delPostByAuthor_DeleteModeTest started.");
-        postService.delPostByAuthor(testAuthor, "<->");
+        postService.delPostByAuthor(testAuthor);
 
         Mockito.verify(postRepository).deletePostsByAuthor(testAuthor);
         Mockito.verify(commentRepository).deleteCommentByAuthor(testAuthor);
         Mockito.verify(reactionService).deleteReactionByUser("post_reacts", testAuthor);
         Mockito.verify(reactionService).deleteReactionByUser("comment_reacts", testAuthor);
-    }
-
-    @Test
-    void delPostByAuthor_ReplaceModeTest() {
-        log.info("delPostByAuthor_ReplaceModeTest started.");
-        String replacement = "deletedUser";
-        postService.delPostByAuthor(testAuthor, replacement);
-
-        Mockito.verify(postRepository).updateAuthorByAuthor(testAuthor, replacement);
-        Mockito.verify(commentRepository).updateAuthorByAuthor(testAuthor, replacement);
-        Mockito.verify(reactionService).replaceUser("post_reacts", testAuthor, replacement);
-        Mockito.verify(reactionService).replaceUser("comment_reacts", testAuthor, replacement);
     }
 }

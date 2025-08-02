@@ -210,7 +210,7 @@ public class PostServiceITest {
         String author = "TestAuthor";
 
         // Вызываем тестируемый метод в режиме удаления
-        postService.delPostByAuthor(author, "<->");
+        postService.delPostByAuthor(author);
 
         // Проверки
         Assertions.assertEquals(0, postRepository.findPostsByAuthor(author).size());
@@ -221,35 +221,6 @@ public class PostServiceITest {
                 .deleteReactionByUser("post_reacts", author);
         Mockito.verify(reactionService, Mockito.times(1))
                 .deleteReactionByUser("comment_reacts", author);
-    }
-
-    @Test
-    void delPostByAuthor_ReplaceModeTest() {
-        log.info("delPostByAuthor_ReplaceModeTest start.");
-        String author = "TestAuthor";
-        String replacement = "DeletedUser";
-
-        // Создаем тестовые данные
-        Post post = postRepository.save(new Post("Title", "Content", author));
-        Comment comment = commentRepository.save(new Comment("Comment", author, post.getId()));
-
-        // Вызываем тестируемый метод в режиме замены
-        postService.delPostByAuthor(author, replacement);
-
-        // Проверки
-        Optional<Post> updatedPost = postRepository.findPostById(post.getId());
-        Assertions.assertTrue(updatedPost.isPresent());
-        Assertions.assertEquals(replacement, updatedPost.get().getAuthor());
-
-        Optional<Comment> updatedComment = commentRepository.findCommentById(comment.getId());
-        Assertions.assertTrue(updatedComment.isPresent());
-        Assertions.assertEquals(replacement, updatedComment.get().getAuthor());
-
-        // Проверка вызовов ReactionService
-        Mockito.verify(reactionService, Mockito.times(1))
-                .replaceUser("post_reacts", author, replacement);
-        Mockito.verify(reactionService, Mockito.times(1))
-                .replaceUser("comment_reacts", author, replacement);
     }
 
     @Test

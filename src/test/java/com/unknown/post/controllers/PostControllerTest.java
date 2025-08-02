@@ -1,5 +1,6 @@
 package com.unknown.post.controllers;
 
+import com.unknown.post.dtos.FullPostDTO;
 import com.unknown.post.dtos.PostDTO;
 import com.unknown.post.dtos.UPostDTO;
 import com.unknown.post.entities.Post;
@@ -14,6 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -37,7 +39,8 @@ class PostControllerTest {
     void getPostTest() throws Exception {
         log.info("getPostTest start.");
         String id = "id";
-        var post = new Post("title", "content", "author");
+        LocalDateTime now = LocalDateTime.now();
+        var post = new FullPostDTO("1", "name", "ava", "p1","content", "author", now);
         Mockito.doReturn(post).when(postService).getPostById(id);
         mockMvc.perform(get("/post/id")).andExpect(status().isOk());
         Mockito.verify(postService, Mockito.times(1)).getPostById(id);
@@ -55,7 +58,8 @@ class PostControllerTest {
     @Test
     void getAllPostsTest() throws Exception {
         log.info("getAllPostsTest start.");
-        var post = new Post("title", "content", "author");
+        LocalDateTime now = LocalDateTime.now();
+        var post = new FullPostDTO("1", "name", "ava", "p1","content", "author", now);
         Mockito.doReturn(List.of(post)).when(postService).getAllPosts();
         mockMvc.perform(get("/post/all")).andExpect(status().isOk());
         Mockito.verify(postService, Mockito.times(1)).getAllPosts();
@@ -64,7 +68,8 @@ class PostControllerTest {
     @Test
     void findPostsTest() throws Exception {
         log.info("findPostsTest start.");
-        var post = new Post("title", "content", "author");
+        LocalDateTime now = LocalDateTime.now();
+        var post = new FullPostDTO("1", "name", "ava", "p1","content", "author", now);
         Mockito.doReturn(List.of(post)).when(postService).findPostsByTitle("tit");
         mockMvc.perform(get("/post/find").param("title", "tit")).andExpect(status().isOk());
         Mockito.verify(postService, Mockito.times(1)).findPostsByTitle("tit");
@@ -113,7 +118,7 @@ class PostControllerTest {
         String id = "id";
         var post = new Post("title", "content", "author");
         Mockito.doReturn(post).when(postService).delPostById(id);
-        mockMvc.perform(delete("/post/id")).andExpect(status().isOk());
+        mockMvc.perform(delete("/post/id")).andExpect(status().isNoContent());
         Mockito.verify(postService, Mockito.times(1)).delPostById(id);
     }
 

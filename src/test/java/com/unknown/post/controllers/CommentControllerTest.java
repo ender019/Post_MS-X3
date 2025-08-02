@@ -1,6 +1,7 @@
 package com.unknown.post.controllers;
 
 import com.unknown.post.dtos.CommentDTO;
+import com.unknown.post.dtos.FullCommentDTO;
 import com.unknown.post.dtos.UCommentDTO;
 import com.unknown.post.entities.Comment;
 import com.unknown.post.services.CommentService;
@@ -14,6 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,7 +38,8 @@ class CommentControllerTest {
     void getCommentByIDTest() throws Exception {
         log.info("getCommentTest start.");
         String id = "id";
-        var comment = new Comment("content", "author", "post");
+        LocalDateTime now = LocalDateTime.now();
+        var comment = new FullCommentDTO("1", "name", "ava", "content", "author", now);
         Mockito.doReturn(comment).when(commentService).getCommentById(id);
         mockMvc.perform(get("/comment/{id}", id)).andExpect(status().isOk());
         Mockito.verify(commentService, Mockito.times(1)).getCommentById(id);
@@ -46,7 +49,8 @@ class CommentControllerTest {
     void getCommentsByAuthorTest() throws Exception {
         log.info("getCommentsByAuthorTest start.");
         String author = "author";
-        var comment = new Comment("content", author, "post");
+        LocalDateTime now = LocalDateTime.now();
+        var comment = new FullCommentDTO("1", "name", "ava", "content", "author", now);
         Mockito.doReturn(List.of(comment)).when(commentService).getCommentsByAuthor(author);
         mockMvc.perform(get("/comment/author/{id}", author)).andExpect(status().isOk());
         Mockito.verify(commentService, Mockito.times(1)).getCommentsByAuthor(author);
@@ -56,7 +60,8 @@ class CommentControllerTest {
     void getCommentsByPostTest() throws Exception {
         log.info("getCommentsByCommentTest start.");
         String post = "post";
-        var comment = new Comment("content", "author", post);
+        LocalDateTime now = LocalDateTime.now();
+        var comment = new FullCommentDTO("1", "name", "ava", "content", "author", now);
         Mockito.doReturn(List.of(comment)).when(commentService).getCommentsByPost(post);
         mockMvc.perform(get("/comment/post/{id}", post)).andExpect(status().isOk());
         Mockito.verify(commentService, Mockito.times(1)).getCommentsByPost(post);

@@ -1,10 +1,12 @@
 package com.unknown.post.integration;
 
 import com.unknown.post.configs.BaseConfiguration;
+import com.unknown.post.configs.WebClientConfig;
 import com.unknown.post.dtos.ReactTypes;
 import com.unknown.post.dtos.UReactDTO;
 import com.unknown.post.entities.Reaction;
 import com.unknown.post.services.ReactionService;
+import com.unknown.post.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,13 +16,22 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Comparator;
 
 @Slf4j
 @SpringBootTest(classes = {BaseConfiguration.class})
 @ActiveProfiles("test")
 @Transactional
 class ReactionServiceITest {
+    @MockitoBean
+    private WebClientConfig webClientConfig;
+
+    @MockitoBean
+    private UserService userService;
+
     @Autowired
     private ReactionService reactionService;
 
@@ -40,8 +51,8 @@ class ReactionServiceITest {
         var res = reactionService.getReactionsCountByCollection("post_reacts", id);
         log.debug("Result is {}", res);
         Assertions.assertEquals(2, res.size());
-        Assertions.assertEquals("1", res.getFirst().count());
-        Assertions.assertEquals("2", res.getLast().count());
+        Assertions.assertEquals("2", res.stream().filter(el -> el.name().equals("LIKE")).findFirst().get().count());
+        Assertions.assertEquals("1",res.stream().filter(el -> el.name().equals("DISLIKE")).findFirst().get().count());
     }
 
     @Test
@@ -60,8 +71,9 @@ class ReactionServiceITest {
         var res = reactionService.getReactionsCountByUser("post_reacts", user_id);
         Assertions.assertEquals(2, res.size());
         log.debug("Result is {}", res);
-        Assertions.assertEquals("1", res.getFirst().count());
-        Assertions.assertEquals("5", res.getLast().count());
+        Assertions.assertEquals("5", res.stream().filter(el -> el.name().equals("LIKE")).findFirst().get().count());
+        Assertions.assertEquals("1",res.stream().filter(el -> el.name().equals("DISLIKE")).findFirst().get().count());
+
     }
 
     @Test
