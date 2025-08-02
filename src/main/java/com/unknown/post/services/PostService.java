@@ -100,19 +100,11 @@ public class PostService {
     }
 
     @Transactional
-    public void delPostByAuthor(String user_id, String deleted) {
-        if (deleted.equals("<->")) {
-            log.debug("Deleting post by author");
-            postRepository.deletePostsByAuthor(user_id);
-            commentRepository.deleteCommentByAuthor(user_id);
-            reactionService.deleteReactionByUser("post_reacts", user_id);
-            reactionService.deleteReactionByUser("comment_reacts", user_id);
-        } else {
-            log.debug("Deleting author: {}", user_id);
-            postRepository.updateAuthorByAuthor(user_id, deleted);
-            commentRepository.updateAuthorByAuthor(user_id, deleted);
-            reactionService.replaceUser("post_reacts", user_id, deleted);
-            reactionService.replaceUser("comment_reacts", user_id, deleted);
-        }
+    public void delPostByAuthor(String user_id) {
+        log.debug("Deleting post by author");
+        postRepository.deletePostsByAuthor(user_id);
+        commentRepository.deleteCommentByAuthor(user_id);
+        reactionService.deleteReactionByUser("post_reacts", user_id);
+        reactionService.deleteReactionByUser("comment_reacts", user_id);
     }
 }

@@ -82,9 +82,9 @@ public class PostController {
     @Operation(summary = "Get posts by author", description = "Возвращает посты конкретного автора.")
     @DeleteMapping("/author/{author_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delPostsByAuthor(@PathVariable String author_id, @RequestParam String deleted) {
+    public void delPostsByAuthor(@PathVariable String author_id) {
         log.info("Del Posts by Author Endpoint");
-        log.debug("Deleting post with author author_id {} with {}", author_id, deleted);
-        postService.delPostByAuthor(author_id, deleted);
+        log.debug("Deleting post with author author_id {}", author_id);
+        postService.delPostByAuthor(author_id);
     }
 }

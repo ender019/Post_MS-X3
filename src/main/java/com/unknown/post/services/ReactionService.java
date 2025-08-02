@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -70,11 +69,5 @@ public class ReactionService {
 
     public void deleteReactionByUser(String collection, String user_id) {
         mongoTemplate.remove(new Query(Criteria.where("user_id").is(user_id)), collection);
-    }
-
-    public void replaceUser(String collection, String old_id, String new_id) {
-        mongoTemplate.updateMulti(new Query(Criteria.where("user_id").is(old_id)),
-                new Update().set("user_id", new_id), collection
-        );
     }
 }
